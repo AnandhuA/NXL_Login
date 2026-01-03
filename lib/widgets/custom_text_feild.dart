@@ -13,7 +13,7 @@ class CustomTextFeild extends StatefulWidget {
   const CustomTextFeild({
     super.key,
     this.isPassword = false,
-    this.keyboardType =TextInputType.text,
+    this.keyboardType = TextInputType.text,
     required this.controller,
     required this.title,
     required this.icon,
@@ -40,7 +40,7 @@ class _CustomTextFeildState extends State<CustomTextFeild> {
       crossAxisAlignment: .start,
       children: [
         Text(widget.headingText),
-        AppSpacing.h4(),
+        AppSpacing.h8(),
         TextFormField(
           keyboardType: widget.keyboardType,
           controller: widget.controller,

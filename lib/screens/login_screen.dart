@@ -5,6 +5,7 @@ import 'package:nxl_login/core/theme/colors.dart';
 import 'package:nxl_login/core/utils/navigation_helper.dart';
 import 'package:nxl_login/core/utils/validator_helper.dart';
 import 'package:nxl_login/providers/app_auth_provider.dart';
+import 'package:nxl_login/screens/forgot_password_screen.dart';
 import 'package:nxl_login/screens/home_screen.dart';
 import 'package:nxl_login/screens/register_screen.dart';
 import 'package:nxl_login/widgets/app_dialog_widget.dart';
@@ -35,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         child: Padding(
           padding: AppPadding.p24(),
-          child: Stack(
+          child: Column(
             children: [
               //-------------- SUCCESS LISTENER ---------------
               Selector<AppAuthProvider, User?>(
@@ -86,78 +87,86 @@ class _LoginScreenState extends State<LoginScreen> {
                 builder: (context, auth, _) {
                   return Form(
                     key: _formKey,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisAlignment: .center,
-                        crossAxisAlignment: .start,
-                        children: [
-                          AuthHeader(
-                            title: "Login",
-                            subTitle: "Please login to your account",
-                          ),
-                          AppSpacing.h20(),
-                          CustomTextFeild(
-                            headingText: "E-mail Address",
-                            icon: Icons.email_outlined,
-                            controller: emailController,
-                            title: "Email",
-                            keyboardType: TextInputType.emailAddress,
-                            validator: ValidatorHelper.email,
-                          ),
-                          AppSpacing.h20(),
-                          CustomTextFeild(
-                            headingText: "Password",
-                            icon: Icons.lock_outline,
-                            controller: passController,
-                            title: "Password",
-                            isPassword: true,
-                            keyboardType: TextInputType.visiblePassword,
-                            validator: ValidatorHelper.password,
-                          ),
-                          AppSpacing.h12(),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: InkWell(
-                              onTap: () {},
-                              child: Text(
-                                "Forgot password?",
-                                style: TextStyle(
-                                  color: AppColors.primary,
-                                  fontWeight: FontWeight.bold,
+                    child: GestureDetector(
+                      onTap: () => FocusScope.of(context).unfocus(),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisAlignment: .center,
+                          crossAxisAlignment: .start,
+                          children: [
+                            AuthHeader(
+                              title: "Login",
+                              subTitle: "Please login to your account",
+                            ),
+                            AppSpacing.h20(),
+                            CustomTextFeild(
+                              headingText: "E-mail Address",
+                              icon: Icons.email_outlined,
+                              controller: emailController,
+                              title: "Email",
+                              keyboardType: TextInputType.emailAddress,
+                              validator: ValidatorHelper.email,
+                            ),
+                            AppSpacing.h20(),
+                            CustomTextFeild(
+                              headingText: "Password",
+                              icon: Icons.lock_outline,
+                              controller: passController,
+                              title: "Password",
+                              isPassword: true,
+                              keyboardType: TextInputType.visiblePassword,
+                              validator: ValidatorHelper.password,
+                            ),
+                            AppSpacing.h12(),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: InkWell(
+                                onTap: () {
+                                  NavigationHelper.push(
+                                    context,
+                                    ForgotPasswordScreen(),
+                                  );
+                                },
+                                child: Text(
+                                  "Forgot password?",
+                                  style: TextStyle(
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          AppSpacing.h20(),
-
-                          CustomButton(
-                            title: "Login",
-                            isLoading: auth.isLoading,
-                            onTap: () {
-                              if (_formKey.currentState!.validate()) {
-                                auth.login(
-                                  emailController.text,
-                                  passController.text,
-                                );
-                              }
-                            },
-                          ),
-                          AppSpacing.h12(),
-                          OrDividerWidget(),
-                          AppSpacing.h12(),
-                          Center(
-                            child: AuthRichText(
-                              questionText: "Don't have an Account?",
-                              actionText: "Create Account",
+                            AppSpacing.h20(),
+                      
+                            CustomButton(
+                              title: "Login",
+                              isLoading: auth.isLoading,
                               onTap: () {
-                                NavigationHelper.pushReplacement(
-                                  context,
-                                  const RegisterScreen(),
-                                );
+                                if (_formKey.currentState!.validate()) {
+                                  auth.login(
+                                    emailController.text,
+                                    passController.text,
+                                  );
+                                }
                               },
                             ),
-                          ),
-                        ],
+                            AppSpacing.h12(),
+                            OrDividerWidget(),
+                            AppSpacing.h12(),
+                            Center(
+                              child: AuthRichText(
+                                questionText: "Don't have an Account?",
+                                actionText: "Create Account",
+                                onTap: () {
+                                  NavigationHelper.pushReplacement(
+                                    context,
+                                    const RegisterScreen(),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );

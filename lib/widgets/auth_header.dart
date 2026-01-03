@@ -19,6 +19,7 @@ class AuthHeader extends StatelessWidget {
           decoration: BoxDecoration(
             color: AppColors.black,
             borderRadius: AppRadius.br8(),
+            image: DecorationImage(image: AssetImage("assets/icons/iocn.png")),
           ),
         ),
         AppSpacing.h16(),

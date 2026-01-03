@@ -35,27 +35,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
       body: SafeArea(
         child: Padding(
           padding: AppPadding.p24(),
-          child: Stack(
+          child: Column(
             children: [
               //---------- SUCCESS-----------------
               Selector<AppAuthProvider, User?>(
                 selector: (_, auth) => auth.user,
                 builder: (_, user, _) {
                   if (user != null) {
-                     WidgetsBinding.instance.addPostFrameCallback((_) async {
-        await showFullScreenLottie(
-          context: context,
-          lottiePath: "assets/animations/congratulation.json",
-          duration: const Duration(seconds: 2),
-        );
+                    WidgetsBinding.instance.addPostFrameCallback((_) async {
+                      await showFullScreenLottie(
+                        context: context,
+                        lottiePath: "assets/animations/congratulation.json",
+                        duration: const Duration(seconds: 2),
+                      );
 
-        if (context.mounted) {
-          NavigationHelper.pushAndRemoveUntil(
-            context,
-            const HomeScreen(),
-          );
-        }
-      
+                      if (context.mounted) {
+                        NavigationHelper.pushAndRemoveUntil(
+                          context,
+                          const HomeScreen(),
+                        );
+                      }
                     });
                   }
                   return const SizedBox.shrink();
@@ -87,91 +86,94 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 builder: (context, auth, _) {
                   return Form(
                     key: _formKey,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: .start,
-                        children: [
-                          AuthHeader(
-                            title: "Create Account",
-                            subTitle:
-                                "Please fill the details below to create your account",
-                          ),
-                          AppSpacing.h20(),
-                          CustomTextFeild(
-                            headingText: "Enter your Name",
-                            icon: Icons.abc,
-                            controller: nameController,
-                            title: "Name",
-                            keyboardType: TextInputType.name,
-                            validator: ValidatorHelper.name,
-                          ),
-                          AppSpacing.h20(),
+                    child: GestureDetector(
+                      onTap: () => FocusScope.of(context).unfocus(),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: .start,
+                          children: [
+                            AuthHeader(
+                              title: "Create Account",
+                              subTitle:
+                                  "Please fill the details below to create your account",
+                            ),
+                            AppSpacing.h16(),
+                            CustomTextFeild(
+                              headingText: "Enter your Name",
+                              icon: Icons.abc,
+                              controller: nameController,
+                              title: "Name",
+                              keyboardType: TextInputType.name,
+                              validator: ValidatorHelper.name,
+                            ),
+                            AppSpacing.h16(),
 
-                          CustomTextFeild(
-                            headingText: "Enter Your Email",
-                            icon: Icons.email_outlined,
-                            controller: emailController,
-                            title: "Email",
-                            keyboardType: TextInputType.emailAddress,
-                            validator: ValidatorHelper.email,
-                          ),
-                          AppSpacing.h20(),
+                            CustomTextFeild(
+                              headingText: "Enter Your Email",
+                              icon: Icons.email_outlined,
+                              controller: emailController,
+                              title: "Email",
+                              keyboardType: TextInputType.emailAddress,
+                              validator: ValidatorHelper.email,
+                            ),
+                            AppSpacing.h16(),
 
-                          CustomTextFeild(
-                            headingText: "Enter your Password",
-                            icon: Icons.lock_outline,
-                            controller: passController,
-                            title: "Password",
-                            keyboardType: TextInputType.visiblePassword,
-                            isPassword: true,
-                            validator: ValidatorHelper.password,
-                          ),
-                          AppSpacing.h20(),
+                            CustomTextFeild(
+                              headingText: "Enter your Password",
+                              icon: Icons.lock_outline,
+                              controller: passController,
+                              title: "Password",
+                              keyboardType: TextInputType.visiblePassword,
+                              isPassword: true,
+                              validator: ValidatorHelper.password,
+                            ),
+                            AppSpacing.h16(),
 
-                          CustomTextFeild(
-                            headingText: "Re-Enter your Password",
-                            icon: Icons.lock_outline,
-                            controller: confirmPassController,
-                            title: "Confirm Password",
-                            keyboardType: TextInputType.visiblePassword,
-                            isPassword: true,
-                            validator: (value) =>
-                                ValidatorHelper.confirmPassword(
-                                  password: passController.text,
-                                  confirmPassword: value,
-                                ),
-                          ),
+                            CustomTextFeild(
+                              headingText: "Re-Enter your Password",
+                              icon: Icons.lock_outline,
+                              controller: confirmPassController,
+                              title: "Confirm Password",
+                              keyboardType: TextInputType.visiblePassword,
+                              isPassword: true,
+                              validator: (value) =>
+                                  ValidatorHelper.confirmPassword(
+                                    password: passController.text,
+                                    confirmPassword: value,
+                                  ),
+                            ),
 
-                          AppSpacing.h20(),
+                            AppSpacing.h20(),
 
-                          CustomButton(
-                            title: "Register",
-                            isLoading: auth.isLoading,
-                            onTap: () {
-                              if (_formKey.currentState!.validate()) {
-                                auth.register(
-                                  emailController.text.trim(),
-                                  passController.text.trim(),
-                                );
-                              }
-                            },
-                          ),
-                          AppSpacing.h12(),
-                          OrDividerWidget(),
-                          AppSpacing.h12(),
-                          Center(
-                            child: AuthRichText(
-                              questionText: "Already have an Account?",
-                              actionText: "Login",
+                            CustomButton(
+                              title: "Register",
+                              isLoading: auth.isLoading,
                               onTap: () {
-                                NavigationHelper.pushReplacement(
-                                  context,
-                                  const LoginScreen(),
-                                );
+                                if (_formKey.currentState!.validate()) {
+                                  auth.register(
+                                    emailController.text.trim(),
+                                    passController.text.trim(),
+                                  );
+                                }
                               },
                             ),
-                          ),
-                        ],
+                            AppSpacing.h12(),
+                            OrDividerWidget(),
+                            AppSpacing.h12(),
+                            Center(
+                              child: AuthRichText(
+                                questionText: "Already have an Account?",
+                                actionText: "Login",
+                                onTap: () {
+                                  NavigationHelper.pushReplacement(
+                                    context,
+                                    const LoginScreen(),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );
@@ -183,5 +185,4 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
     );
   }
-
 }
