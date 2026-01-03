@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:nxl_login/providers/app_auth_provider.dart';
 import 'package:nxl_login/screens/login_screen.dart';
+import 'package:nxl_login/widgets/app_dialog_widget.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,8 +21,19 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
-            onPressed: () {
-              context.read<AppAuthProvider>().logout();
+            onPressed: () async {
+              final bool? confirmed = await showAppDialog(
+                context: context,
+                title: "Logout",
+                message: "Are you sure you want to logout?",
+                type: DialogType.confirmation,
+                confirmText: "Logout",
+                cancelText: "Cancel",
+              );
+
+              if (confirmed == true && context.mounted) {
+                context.read<AppAuthProvider>().logout();
+              }
             },
           ),
         ],
@@ -45,7 +58,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
 
           //------- MAIN UI ------
-          const Center(child: Text("Logged In Successfully 🎉")),
+          Column(
+            mainAxisAlignment: .center,
+            children: [Lottie.asset("assets/animations/Welcome.json")],
+          ),
         ],
       ),
     );

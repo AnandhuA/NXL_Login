@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:nxl_login/core/utils/helper_methods.dart';
 
 enum DialogType { error, confirmation, info }
@@ -25,6 +26,38 @@ Future<bool?> showAppDialog({
         ),
         content: Text(message),
         actions: buildActions(context, type, confirmText, cancelText),
+      );
+    },
+  );
+}
+
+
+
+Future<void> showSuccessDialog({
+  required BuildContext context,
+  required String message,
+}) {
+  return showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) {
+      return AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Lottie.asset(
+              "assets/animations/congratulation.json",
+              height: 150,
+              repeat: false,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+          ],
+        ),
       );
     },
   );

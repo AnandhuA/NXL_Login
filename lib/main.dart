@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:nxl_login/core/theme/colors.dart';
 import 'package:nxl_login/providers/app_auth_provider.dart';
 import 'package:nxl_login/screens/login_screen.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +21,11 @@ class MyApp extends StatelessWidget {
       child: MultiProvider(
         providers: [ChangeNotifierProvider(create: (_) => AppAuthProvider())],
         child: MaterialApp(
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
+            focusColor: AppColors.black,
+            useMaterial3: true,
+          ),
           debugShowCheckedModeBanner: false,
           home: LoginScreen(),
         ),
