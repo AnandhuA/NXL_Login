@@ -1,54 +1,145 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:nxl_login/core/config/sizes.dart';
-import 'package:nxl_login/core/theme/colors.dart';
 import 'package:nxl_login/core/utils/navigation_helper.dart';
-import 'package:nxl_login/providers/auth_provider.dart';
+import 'package:nxl_login/core/utils/validator_helper.dart';
+import 'package:nxl_login/providers/app_auth_provider.dart';
+import 'package:nxl_login/screens/login_screen.dart';
+import 'package:nxl_login/widgets/app_dialog_widget.dart';
+import 'package:nxl_login/widgets/auth_rich_text.dart';
+import 'package:nxl_login/widgets/custom_button.dart';
+import 'package:nxl_login/widgets/custom_text_feild.dart';
 import 'package:provider/provider.dart';
 
-class RegisterScreen extends StatelessWidget {
+class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final TextEditingController emailController = TextEditingController();
-    final TextEditingController passController = TextEditingController();
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
 
+class _RegisterScreenState extends State<RegisterScreen> {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passController = TextEditingController();
+  final TextEditingController confirmPassController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Create Account")),
       body: Padding(
         padding: AppPadding.p24(),
-        child: Consumer<AuthProvider>(
-          builder: (context, auth, _) {
-            return Column(
-              children: [
-                TextField(
-                  controller: emailController,
-                  decoration: const InputDecoration(labelText: 'Email'),
-                ),
-                TextField(
-                  controller: passController,
-                  decoration: const InputDecoration(labelText: 'Password'),
-                  obscureText: true,
-                ),
-                AppSpacing.h20(),
-                auth.isLoading
-                    ? SpinKitThreeBounce(color: AppColors.black)
-                    : ElevatedButton(
-                        onPressed: () async {
-                          await auth.register(
-                            emailController.text,
-                            passController.text,
-                          );
-                          if (context.mounted) {
-                            NavigationHelper.pop(context);
+        child: Stack(
+          children: [
+            //---------- SUCCESS-----------------
+            Selector<AppAuthProvider, User?>(
+              selector: (_, auth) => auth.user,
+              builder: (_, user, _) {
+                if (user != null) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) async {
+                    await showAppDialog(
+                      context: context,
+                      title: "Success",
+                      message: "Account created successfully.",
+                    );
+                  });
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+
+            //----------- ERROR LISTENER -----------------
+            Selector<AppAuthProvider, String?>(
+              selector: (_, auth) => auth.error,
+              builder: (_, error, _) {
+                if (error != null) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) async {
+                    await showAppDialog(
+                      context: context,
+                      title: "Registration Failed",
+                      message: error,
+                    );
+                    if (context.mounted) {
+                      context.read<AppAuthProvider>().clearError();
+                    }
+                  });
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+
+            //------------- MAIN UI-----------------
+            Consumer<AppAuthProvider>(
+              builder: (context, auth, _) {
+                return Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      CustomTextFeild(
+                        controller: nameController,
+                        title: "Name",
+                        validator: ValidatorHelper.name,
+                      ),
+                      AppSpacing.h20(),
+
+                      CustomTextFeild(
+                        controller: emailController,
+                        title: "Email",
+                        validator: ValidatorHelper.email,
+                      ),
+                      AppSpacing.h20(),
+
+                      CustomTextFeild(
+                        controller: passController,
+                        title: "Password",
+                        isPassword: true,
+                        validator: ValidatorHelper.password,
+                      ),
+                      AppSpacing.h20(),
+
+                      CustomTextFeild(
+                        controller: confirmPassController,
+                        title: "Confirm Password",
+                        isPassword: true,
+                        validator: (value) => ValidatorHelper.confirmPassword(
+                          password: passController.text,
+                          confirmPassword: value,
+                        ),
+                      ),
+
+                      AppSpacing.h20(),
+
+                      CustomButton(
+                        title: "Register",
+                        isLoading: auth.isLoading,
+                        onTap: () {
+                          if (_formKey.currentState!.validate()) {
+                            auth.register(
+                              emailController.text.trim(),
+                              passController.text.trim(),
+                            );
                           }
                         },
-                        child: const Text("Register"),
                       ),
-              ],
-            );
-          },
+                      AppSpacing.h16(),
+                      AuthRichText(
+                        questionText: "Already have an Account?",
+                        actionText: "Login",
+                        onTap: () {
+                          NavigationHelper.pushReplacement(
+                            context,
+                            const LoginScreen(),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
