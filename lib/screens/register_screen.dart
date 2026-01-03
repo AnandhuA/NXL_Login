@@ -100,7 +100,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             AppSpacing.h16(),
                             CustomTextFeild(
                               headingText: "Enter your Name",
-                              icon: Icons.abc,
+                              icon: Icons.person_2_outlined,
                               controller: nameController,
                               title: "Name",
                               keyboardType: TextInputType.name,
